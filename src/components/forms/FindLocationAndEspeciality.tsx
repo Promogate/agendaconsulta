@@ -53,7 +53,7 @@ export function FindLocationAndEspeciality() {
               </FormItem>
             )}
           />
-          <Button className="bg-blue-500 flex items-center col-span-2">
+          <Button className="bg-blue-500 flex items-center col-span-2 float-left">
             <Search className="w-4 h-4"/>
             Pesquisar
           </Button>

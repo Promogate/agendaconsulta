@@ -10,7 +10,7 @@ export function Hero() {
   return (
     <section className={cn(hind.className, "xl:h-[50vh]")}>
       <div className="max-w-7xl py-4 mx-auto grid xl:grid-cols-2 items-center">
-        <div className="gap-y-4 content-center h-full space-y-32">
+        <div className="gap-y-4 content-center h-full space-y-24">
           <div className="space-y-4">
             <h1 className={cn(montserrat.className, "text-3xl font-semibold")}>
               Agende agora sua consulta ou exame

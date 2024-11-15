@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id              String    @id @default(cuid())
+  name            String
+  email           String
+  passwordHash    String
+  phone           String
+  isPhoneWhatsapp Boolean   @default(false)
+  address         String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @default(now())
+  deletedAt       DateTime?
+
+  @@map("users")
+}
+
+model Medic {
+  id              String   @id @default(cuid())
+  name            String
+  email           String
+  passwordHash    String
+  crm             String?
+  specialties     String[]
+  phone           String?
+  isPhoneWhatsapp Boolean  @default(false)
+
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @default(now())
+  deletedAt DateTime?
+  clinics   MedicsOnClinics[]
+  schedules MedicSchedule[]
+
+  @@map("medics")
+}
+
+model Clinic {
+  id              String            @id @default(cuid())
+  email           String
+  phone           String
+  address         String
+  isPhoneWhatsapp Boolean           @default(false)
+  medics          MedicsOnClinics[]
+  parentClinicId  String?
+  parentClinic    Clinic?           @relation("SubClinics", fields: [parentClinicId], references: [id])
+  subClinics      Clinic[]          @relation("SubClinics")
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @default(now())
+  deletedAt     DateTime?
+  MedicSchedule MedicSchedule[]
+
+  @@map("clinics")
+}
+
+model MedicsOnClinics {
+  medic     Medic  @relation(fields: [medicId], references: [id])
+  medicId   String
+  clinic    Clinic @relation(fields: [clinicId], references: [id])
+  clinicId  String
+  specialty String
+  price     Float?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  @@id([medicId, clinicId])
+}
+
+model MedicSchedule {
+  id          String   @id @default(cuid())
+  medic       Medic    @relation(fields: [medicId], references: [id])
+  medicId     String
+  clinic      Clinic   @relation(fields: [clinicId], references: [id])
+  clinicId    String
+  dayOfWeek   Int
+  startTime   DateTime
+  endTime     DateTime
+  isAvailable Boolean  @default(true)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  @@index([medicId, clinicId, dayOfWeek])
+  @@map("medic_schedules")
+}
