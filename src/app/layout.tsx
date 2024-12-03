@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Hind } from "next/font/google";
 import { cn } from "@/lib/utils";
+import Providers from "./Providers";
 
 export const metadata: Metadata = {
   title: "AgendaConsulta - Encontre o procedimento médico mais próximo de você",
@@ -18,7 +19,9 @@ export default function RootLayout({
   return (
     <html lang="pt-br">
       <body className={cn(hind.className, "antialiased")}>
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );
