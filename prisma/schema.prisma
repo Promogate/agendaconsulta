@@ -1,0 +1,140 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model administrators {
+  id            String             @id
+  name          String
+  email         String             @unique
+  password_hash String
+  admin_level   AdministratorLevel @default(EMPLOYEE)
+  created_at    DateTime           @default(now())
+  updated_at    DateTime           @default(now())
+}
+
+model appointments {
+  id                 String            @id
+  user_id            String
+  clinic_id          String
+  start_time         DateTime
+  appointment_status AppointmentStatus @default(PENDING)
+}
+
+model clinic_doctor_availatibilities {
+  id           String   @id
+  clinic_id    String
+  day_of_week  String
+  start_time   String
+  end_time     String
+  is_available Boolean  @default(false)
+  doctor_id    String?
+  clinics      clinics  @relation(fields: [clinic_id], references: [id])
+  doctors      doctors? @relation(fields: [doctor_id], references: [id])
+}
+
+model clinics {
+  id                             String                           @id
+  name                           String
+  email                          String                           @unique
+  phone                          String
+  is_phone_whatsapp              Boolean                          @default(false)
+  created_at                     DateTime                         @default(now())
+  updated_at                     DateTime                         @default(now())
+  municipality                   String
+  number                         String
+  state                          String
+  street                         String
+  zipcode                        String
+  clinic_doctor_availatibilities clinic_doctor_availatibilities[]
+  specialization_on_clinics      specialization_on_clinics[]
+}
+
+model doctor_hospital_affiliation {
+  id          String   @id
+  doctor_id   String
+  clinic_name String
+  city        String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
+}
+
+model doctors {
+  id                             String                           @id
+  first_name                     String
+  last_name                      String
+  email                          String                           @unique
+  crm                            String?
+  phone                          String?
+  password_hash                  String
+  is_phone_whatsapp              Boolean                          @default(false)
+  clinic_doctor_availatibilities clinic_doctor_availatibilities[]
+  specialization_on_doctors      specialization_on_doctors[]
+}
+
+model specialization_on_clinics {
+  id                String          @id
+  clinic_id         String
+  specialization_id String
+  clinics           clinics         @relation(fields: [clinic_id], references: [id])
+  specializations   specializations @relation(fields: [specialization_id], references: [id])
+
+  @@unique([clinic_id, specialization_id])
+}
+
+model specialization_on_doctors {
+  id                String          @id
+  doctor_id         String
+  specialization_id String
+  doctors           doctors         @relation(fields: [doctor_id], references: [id])
+  specializations   specializations @relation(fields: [specialization_id], references: [id])
+
+  @@unique([doctor_id, specialization_id])
+}
+
+model specializations {
+  id                        String                      @id
+  specialization_name       String                      @unique
+  specialization_on_clinics specialization_on_clinics[]
+  specialization_on_doctors specialization_on_doctors[]
+}
+
+model user_reviews {
+  id                   String   @id
+  user_id              String
+  doctor_id            String
+  is_review_anonymous  Boolean  @default(false)
+  is_doctor_recommende Boolean  @default(true)
+  rating               Int
+  created_at           DateTime @default(now())
+  updated_at           DateTime @default(now())
+}
+
+model users {
+  id                String   @id
+  name              String
+  email             String   @unique
+  address           String?
+  phone             String?
+  created_at        DateTime @default(now())
+  is_phone_whatsapp Boolean  @default(false)
+  password_hash     String
+  updated_at        DateTime @default(now())
+}
+
+enum AdministratorLevel {
+  ADMIN
+  MANAGER
+  EMPLOYEE
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
