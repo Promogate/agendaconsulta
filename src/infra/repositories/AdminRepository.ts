@@ -1,0 +1,111 @@
+import { AdministratorLevel } from "@/domain/entities/Administrator";
+import { AdministratorRepository, CreateAdministrator, CreateAdministratorDTO, FindByEmailAdministrator, FindByIdAdministrator, UpdateAdministrator, UpdateAdministratorDTO } from "@/domain/repositories/AdministratorRepository";
+import { PrismaClient } from "@prisma/client";
+
+export class PrismaAdministratorRepository implements AdministratorRepository {
+  constructor(private readonly prisma: PrismaClient) { }
+
+  async create(input: CreateAdministratorDTO): Promise<CreateAdministrator.Output> {
+    if (!input.admin_level) {
+      const admin = await this.prisma.administrators.create({
+        data: {
+          email: input.email,
+          name: input.name,
+          password_hash: input.password_hash
+        }
+      });
+      return {
+        id: admin.id,
+        name: admin.name,
+        email: admin.email,
+        created_at: admin.created_at,
+        updated_at: admin.updated_at,
+        admin_level: admin.admin_level
+      };
+    }
+    const admin = await this.prisma.administrators.create({
+      data: {
+        email: input.email,
+        name: input.name,
+        password_hash: input.password_hash,
+        admin_level: input.admin_level
+      }
+    });
+    return {
+      id: admin.id,
+      name: admin.name,
+      email: admin.email,
+      created_at: admin.created_at,
+      updated_at: admin.updated_at,
+      admin_level: admin.admin_level
+    };
+  }
+
+  async findById(id: string): Promise<FindByIdAdministrator.Output> {
+    const admin = await this.prisma.administrators.findUnique({ where: { id } });
+    if (!admin) return null;
+    return {
+      id: admin.id,
+      name: admin.name,
+      email: admin.email,
+      created_at: admin.created_at,
+      updated_at: admin.updated_at,
+      admin_level: admin.admin_level
+    };
+  }
+
+  async findByEmail(email: string): Promise<FindByEmailAdministrator.Output> {
+    const admin = await this.prisma.administrators.findUnique({ where: { email } });
+    if (!admin) return null;
+    return {
+      id: admin.id,
+      name: admin.name,
+      email: admin.email,
+      created_at: admin.created_at,
+      updated_at: admin.updated_at,
+      admin_level: admin.admin_level
+    };
+  }
+
+  async update(id: string, data: UpdateAdministratorDTO): Promise<UpdateAdministrator.Output> {
+    if (!data.admin_level) {
+      const admin = await this.prisma.administrators.update({
+        where: { id },
+        data: {
+          email: data.email,
+          name: data.name,
+          password_hash: data.password_hash
+        }
+      });
+      return {
+        id: admin.id,
+        name: admin.name,
+        email: admin.email,
+        created_at: admin.created_at,
+        updated_at: admin.updated_at,
+        admin_level: admin.admin_level
+      };
+    }
+    const admin = await this.prisma.administrators.update({
+      where: { id },
+      data: {
+        admin_level: data.admin_level as keyof typeof AdministratorLevel,
+        email: data.email,
+        name: data.name,
+        password_hash: data.password_hash
+      }
+    });
+    return {
+      id: admin.id,
+      name: admin.name,
+      email: admin.email,
+      created_at: admin.created_at,
+      updated_at: admin.updated_at,
+      admin_level: admin.admin_level
+    };
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.prisma.administrators.delete({ where: { id } });
+  }
+}
