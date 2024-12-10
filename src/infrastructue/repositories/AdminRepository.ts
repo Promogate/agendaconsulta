@@ -4,7 +4,6 @@ import { PrismaClient } from "@prisma/client";
 
 export class PrismaAdministratorRepository implements AdministratorRepository {
   constructor(private readonly prisma: PrismaClient) { }
-
   async create(input: CreateAdministratorDTO): Promise<CreateAdministrator.Output> {
     if (!input.admin_level) {
       const admin = await this.prisma.administrators.create({
