@@ -2,7 +2,7 @@
 export default function Page() {
   return (
     <div>
-      <p>Page</p>
+      <p>Painel</p>
     </div>
   );
 }
