@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
 import { setSession } from "@/lib/auth";
-import AuthenticateAdministratorUseCase from "@/use-cases/AuthenticateAdministrator";
+import AuthenticateAdministratorUseCase from "@/applicatioon/use-cases/AuthenticateAdministrator";
 import { useRouter } from "next/navigation";
 
 const authenticateAdministratorUseCase = new AuthenticateAdministratorUseCase(api);
