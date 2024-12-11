@@ -1,5 +1,8 @@
+
 export default function Page() {
   return (
-    <p>Dasboard Works!</p>
-  )
+    <div>
+      <p>Page</p>
+    </div>
+  );
 }
